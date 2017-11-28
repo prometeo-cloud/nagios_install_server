@@ -65,17 +65,17 @@
 
 ## Firewalld
 - name: Determine if firewalld is in use
-  shell: systemctl is-enabled firewalld.service | egrep -qv 'masked|disabled'
+  shell: systemctl is-enabled firewalld.service | grep -c 'enabled'
   register: firewalld_in_use
   no_log: true
 
 - name: Determine if firewalld is active
-  shell: systemctl is-active firewalld.service | grep -vq inactive
+  shell: systemctl is-active firewalld.service | grep -c 'active'
   register: firewalld_is_active
   no_log: true
 
 - name: Determine if TCP/{{nagios_http_port}} is already active
-  shell: firewall-cmd --list-ports | egrep -q "^{{nagios_http_port}}/tcp"
+  shell: firewall-cmd --list-ports | grep -c "^{{nagios_http_port}}/tcp"
   register: firewalld_nagios_http_port_exists
   no_log: true
 
@@ -83,10 +83,10 @@
 - name: Add firewall rule for TCP/{{nagios_http_port}} (firewalld)
   command: "{{ item }}"
   with_items:
-    - firewall-cmd --zone=public --add-port={{nagios_http_port}}/tcp --permanent
-    - firewall-cmd --reload
+  - firewall-cmd --zone=public --add-port={{nagios_http_port}}/tcp --permanent
+  - firewall-cmd --reload
   become: true
-  when: firewalld_in_use.rc == 0 and firewalld_is_active.rc == 0 and firewalld_nagios_http_port_exists.rc != 0
+  when: firewalld_in_use.stdout == "1" and firewalld_is_active.stdout == "1" and firewalld_nagios_http_port_exists.stdout == "0"
 
 - name: Start nagios service
   command: systemctl restart nagios.service

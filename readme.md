@@ -41,6 +41,8 @@ Needs to be provided to the role before execution.
 | **nagios_https_port** | The Nagios HTTPS Port |443 |
 | **admin_name** | The Nagios Admin Name | Nagios Admin |
 | **nrpe_tcp_port** | The nrpe port | 5666 |
+| **nagios_server_hostname** | The Nagios Server Hostname | |
+| **nagios_server_ip** | The Nagios Server IP Address | |
 
 ## Usage:
 
@@ -56,5 +58,6 @@ How to invoke the role from a playbook:
     nagios_admin_email: '?'
     nagios_guest_username: '?'
     nagios_guest_password: '?'
-
+    nagios_server_hostname: '?'
+    nagios_server_ip: '?'
 ```
