@@ -31,18 +31,15 @@
 
 - name: Check nagios Users
   stat: path=/etc/nagios/passwd
-  ignore_errors: true
 
 - name: Create empty password file
   command: touch /etc/nagios/passwd
-  ignore_errors: true
   args:
     creates: /etc/nagios/passwd
   when: nagios_user_pwfile_exists != 0
 
 - name: Create nagios admin user
-  command: htpasswd -b -c /etc/nagios/passwd {{ nagios_username }} {{ nagios_password }}
-  ignore_errors: true
+  command: htpasswd -b -c /etc/nagios/passwd {{ nagios_admin_username }} {{ nagios_admin_password }}
   when: nagios_user_pwfile_exists != 0
 
 - name: Create nagios guest user
@@ -51,19 +48,15 @@
 
 - name: Create generic nagios services config
   copy: src=service.cfg dest=/etc/nagios/
-  ignore_errors: true
 
 - name: Configure nagios localhost monitoring
   copy: src=localhost.cfg dest=/etc/nagios/objects/localhost.cfg
-  ignore_errors: true
 
 - name: Create generic nagios services config
   copy: src=client-service.cfg dest=/usr/local/nagios/etc/
-  ignore_errors: true
 
 - name: Configure nagios client monitoring
   copy: src=client.cfg dest=/usr/local/nagios/etc/client.cfg
-  ignore_errors: true
 
 - name: Set HTTP Listen Port
   lineinfile: dest=/etc/httpd/conf/httpd.conf \
@@ -73,19 +66,16 @@
 ## Firewalld
 - name: Determine if firewalld is in use
   shell: systemctl is-enabled firewalld.service | egrep -qv 'masked|disabled'
-  ignore_errors: true
   register: firewalld_in_use
   no_log: true
 
 - name: Determine if firewalld is active
   shell: systemctl is-active firewalld.service | grep -vq inactive
-  ignore_errors: true
   register: firewalld_is_active
   no_log: true
 
 - name: Determine if TCP/{{nagios_http_port}} is already active
   shell: firewall-cmd --list-ports | egrep -q "^{{nagios_http_port}}/tcp"
-  ignore_errors: true
   register: firewalld_nagios_http_port_exists
   no_log: true
 
@@ -95,29 +85,24 @@
   with_items:
     - firewall-cmd --zone=public --add-port={{nagios_http_port}}/tcp --permanent
     - firewall-cmd --reload
-  ignore_errors: true
   become: true
   when: firewalld_in_use.rc == 0 and firewalld_is_active.rc == 0 and firewalld_nagios_http_port_exists.rc != 0
 
 - name: Start nagios service
   command: systemctl restart nagios.service
-  ignore_errors: true
 
 - name: Set nagios to start on boot
   command: systemctl enable nagios.service
-  ignore_errors: true
 
 - name: Setup HTTPD service
   command: systemctl enable httpd.service
-  ignore_errors: true
 
 - name: Restart HTTPD service
   command: systemctl restart httpd.service
-  ignore_errors: true
 
 - name: Display nagios information
   debug:
-    msg="You can access nagios at https://{{ansible_fqdn}}/nagios using {{nagios_username}}"
+    msg="You can access nagios at https://{{ansible_fqdn}}/nagios using {{nagios_admin_username}}"
 
 - name: Display nagios guest information
   debug:

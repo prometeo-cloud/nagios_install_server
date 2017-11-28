@@ -27,9 +27,9 @@ Needs to be provided to the role before execution.
 
 | Variable  | Description  | Example  | 
 |---|---|---|
-| **nagios_username** | The admin username. | nagiosadmin |
-| **nagios_password** | The admin password. | abc123ABC |
-| **admin_email** | The edmin password. | |
+| **nagios_admin_username** | The admin username. | nagiosadmin |
+| **nagios_admin_password** | The admin password. | abc123ABC |
+| **nagios_admin_email** | The edmin password. | |
 | **nagios_guest_username** | The Nagios guest user. | guest |
 | **nagios_guest_password** | The Nagios guest password. |guest |
 
@@ -51,9 +51,9 @@ How to invoke the role from a playbook:
   include_role:
     name: nagios_install_server
   vars:
-    nagios_username: '?'
-    nagios_password: '?'
-    admin_email: '?'
+    nagios_admin_username: '?'
+    nagios_admin_password: '?'
+    nagios_admin_email: '?'
     nagios_guest_username: '?'
     nagios_guest_password: '?'
 
