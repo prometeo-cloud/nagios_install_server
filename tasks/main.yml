@@ -1,0 +1,124 @@
+---
+# Install nagios server
+- name: Check Operating System
+  fail:
+    msg="Non supported operating system (CentOS or RHEL 7+)"
+  when: ((ansible_os_family != "RedHat") or (ansible_distribution_major_version|int < 7))
+
+- name: Ensuring subscription-manager is installed
+  yum:
+    name: subscription-manager
+    state: latest
+
+- name: Disabling all repositories
+  command: subscription-manager repos --disable="*"
+
+- name: Enabling only the required repositories
+  command: subscription-manager repos --enable="{{ item }}"
+  with_items: "{{ repos_to_enable }}"
+
+- name: Install nagios packages and its plugins
+  yum:
+      name: "{{ item }}"
+      state: latest
+  with_items: "{{ packages_to_install }}"
+  register: nagios_needs_restart
+
+- name: Check password file exists
+  stat:
+    path: /etc/nagios/passwd
+  register: nagios_user_pwfile_exists
+
+- name: Check nagios Users
+  stat: path=/etc/nagios/passwd
+  ignore_errors: true
+
+- name: Create empty password file
+  command: touch /etc/nagios/passwd
+  ignore_errors: true
+  args:
+    creates: /etc/nagios/passwd
+  when: nagios_user_pwfile_exists != 0
+
+- name: Create nagios admin user
+  command: htpasswd -b -c /etc/nagios/passwd {{ nagios_username }} {{ nagios_password }}
+  ignore_errors: true
+  when: nagios_user_pwfile_exists != 0
+
+- name: Create nagios guest user
+  command: htpasswd -b /etc/nagios/passwd {{ nagios_guest_username }} {{ nagios_guest_password }}
+  when: nagios_create_guest_user
+
+- name: Create generic nagios services config
+  copy: src=service.cfg dest=/etc/nagios/
+  ignore_errors: true
+
+- name: Configure nagios localhost monitoring
+  copy: src=localhost.cfg dest=/etc/nagios/objects/localhost.cfg
+  ignore_errors: true
+
+- name: Create generic nagios services config
+  copy: src=client-service.cfg dest=/usr/local/nagios/etc/
+  ignore_errors: true
+
+- name: Configure nagios client monitoring
+  copy: src=client.cfg dest=/usr/local/nagios/etc/client.cfg
+  ignore_errors: true
+
+- name: Set HTTP Listen Port
+  lineinfile: dest=/etc/httpd/conf/httpd.conf \
+          regexp="^Listen" \
+          line="Listen {{nagios_http_port}}"
+
+## Firewalld
+- name: Determine if firewalld is in use
+  shell: systemctl is-enabled firewalld.service | egrep -qv 'masked|disabled'
+  ignore_errors: true
+  register: firewalld_in_use
+  no_log: true
+
+- name: Determine if firewalld is active
+  shell: systemctl is-active firewalld.service | grep -vq inactive
+  ignore_errors: true
+  register: firewalld_is_active
+  no_log: true
+
+- name: Determine if TCP/{{nagios_http_port}} is already active
+  shell: firewall-cmd --list-ports | egrep -q "^{{nagios_http_port}}/tcp"
+  ignore_errors: true
+  register: firewalld_nagios_http_port_exists
+  no_log: true
+
+# add firewall rule via firewall-cmd
+- name: Add firewall rule for TCP/{{nagios_http_port}} (firewalld)
+  command: "{{ item }}"
+  with_items:
+    - firewall-cmd --zone=public --add-port={{nagios_http_port}}/tcp --permanent
+    - firewall-cmd --reload
+  ignore_errors: true
+  become: true
+  when: firewalld_in_use.rc == 0 and firewalld_is_active.rc == 0 and firewalld_nagios_http_port_exists.rc != 0
+
+- name: Start nagios service
+  command: systemctl restart nagios.service
+  ignore_errors: true
+
+- name: Set nagios to start on boot
+  command: systemctl enable nagios.service
+  ignore_errors: true
+
+- name: Setup HTTPD service
+  command: systemctl enable httpd.service
+  ignore_errors: true
+
+- name: Restart HTTPD service
+  command: systemctl restart httpd.service
+  ignore_errors: true
+
+- name: Display nagios information
+  debug:
+    msg="You can access nagios at https://{{ansible_fqdn}}/nagios using {{nagios_username}}"
+
+- name: Display nagios guest information
+  debug:
+    msg="Guest read only users at https://{{ansible_fqdn}}/nagios using {{nagios_guest_username}}"
