@@ -69,8 +69,8 @@
     permanent: "{{ item.permanent }}"
     state: enabled
   with_items:
-  	- { port: '{{ nagios_http_port }}', permanent: true }
-  	- { port: '{{ nagios_https_port }}', permanent: true }
+    - { port: '{{ nagios_http_port }}', permanent: true }
+    - { port: '{{ nagios_https_port }}', permanent: true }
 
 - name: Start nagios service
   command: systemctl restart nagios.service
