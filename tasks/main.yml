@@ -63,30 +63,14 @@
           regexp="^Listen" \
           line="Listen {{nagios_http_port}}"
 
-## Firewalld
-- name: Determine if firewalld is in use
-  shell: systemctl is-enabled firewalld.service | grep -c 'enabled'
-  register: firewalld_in_use
-  no_log: true
-
-- name: Determine if firewalld is active
-  shell: systemctl is-active firewalld.service | grep -c 'active'
-  register: firewalld_is_active
-  no_log: true
-
-- name: Determine if TCP/{{nagios_http_port}} is already active
-  shell: firewall-cmd --list-ports | grep -c "^{{nagios_http_port}}/tcp"
-  register: firewalld_nagios_http_port_exists
-  no_log: true
-
-# add firewall rule via firewall-cmd
-- name: Add firewall rule for TCP/{{nagios_http_port}} (firewalld)
-  command: "{{ item }}"
+- name: Firewall Configuration
+  firewalld:
+    port: "{{ item.port }}"
+    permanent: "{{ item.permanent }}"
+    state: enabled
   with_items:
-  - firewall-cmd --zone=public --add-port={{nagios_http_port}}/tcp --permanent
-  - firewall-cmd --reload
-  become: true
-  when: firewalld_in_use.stdout == "1" and firewalld_is_active.stdout == "1" and firewalld_nagios_http_port_exists.stdout == "0"
+  	- { port: '{{ nagios_http_port }}', permanent: true }
+  	- { port: '{{ nagios_https_port }}', permanent: true }
 
 - name: Start nagios service
   command: systemctl restart nagios.service
@@ -99,6 +83,9 @@
 
 - name: Restart HTTPD service
   command: systemctl restart httpd.service
+
+- name: Restart Firewalled service
+  command: systemctl restart firewalled.service
 
 - name: Display nagios information
   debug:
