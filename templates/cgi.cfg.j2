@@ -115,7 +115,7 @@ use_ssl_authentication=0
 # not use authorization.  You may use an asterisk (*) to
 # authorize any user who has authenticated to the web server.
 
-authorized_for_system_information={{nagios_username}}
+authorized_for_system_information={{ nagios_admin_username }}
 
 
 
@@ -127,7 +127,7 @@ authorized_for_system_information={{nagios_username}}
 # an asterisk (*) to authorize any user who has authenticated
 # to the web server.
 
-authorized_for_configuration_information={{nagios_username}}
+authorized_for_configuration_information={{ nagios_admin_username }}
 
 
 
@@ -140,7 +140,7 @@ authorized_for_configuration_information={{nagios_username}}
 # You may use an asterisk (*) to authorize any user who has
 # authenticated to the web server.
 
-authorized_for_system_commands={{nagios_username}}
+authorized_for_system_commands={{ nagios_admin_username }}
 
 
 
@@ -155,11 +155,11 @@ authorized_for_system_commands={{nagios_username}}
 
 
 {% if nagios_create_guest_user  %}
-authorized_for_all_services={{nagios_username}},{{nagios_ro_username}}
-authorized_for_all_hosts={{nagios_username}},{{nagios_ro_username}}
+authorized_for_all_services={{ nagios_admin_username }},{{ nagios_guest_username }}
+authorized_for_all_hosts={{ nagios_admin_username }},{{ nagios_guest_username }}
 {% else %}
-authorized_for_all_services={{nagios_username}}
-authorized_for_all_hosts={{nagios_username}}
+authorized_for_all_services={{ nagios_admin_username }}
+authorized_for_all_hosts={{ nagios_admin_username }}
 {% endif %}
 
 
@@ -172,8 +172,8 @@ authorized_for_all_hosts={{nagios_username}}
 # authorization).  You may use an asterisk (*) to authorize any
 # user who has authenticated to the web server.
 
-authorized_for_all_service_commands={{nagios_username}}
-authorized_for_all_host_commands={{nagios_username}}
+authorized_for_all_service_commands={{ nagios_admin_username }}
+authorized_for_all_host_commands={{ nagios_admin_username }}
 
 # READ-ONLY USERS
 # A comma-delimited list of usernames that have read-only rights in
@@ -211,9 +211,6 @@ authorized_for_all_host_commands={{nagios_username}}
 #color_transparency_index_r=255
 #color_transparency_index_g=255
 #color_transparency_index_b=255
-
-
-
 
 # DEFAULT STATUSMAP LAYOUT METHOD
 # This option allows you to specify the default layout method

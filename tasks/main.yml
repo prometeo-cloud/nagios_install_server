@@ -17,20 +17,25 @@
   command: subscription-manager repos --enable="{{ item }}"
   with_items: "{{ repos_to_enable }}"
 
+- name: Activate the EPEL repository on RHEL 7.4
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+
 - name: Install nagios packages and its plugins
   yum:
-      name: "{{ item }}"
-      state: latest
+    name: "{{ item }}"
+    state: latest
   with_items: "{{ packages_to_install }}"
-  register: nagios_needs_restart
 
-- name: Check password file exists
-  stat:
-    path: /etc/nagios/passwd
-  register: nagios_user_pwfile_exists
+#- name: Check password file exists
+#  stat: path= /etc/nagios/passwd
+#  register: nagios_user_pwfile_exists
 
 - name: Check nagios Users
   stat: path=/etc/nagios/passwd
+  ignore_errors: true
+  register: nagios_user_pwfile_exists
 
 - name: Create empty password file
   command: touch /etc/nagios/passwd
@@ -46,51 +51,67 @@
   command: htpasswd -b /etc/nagios/passwd {{ nagios_guest_username }} {{ nagios_guest_password }}
   when: nagios_create_guest_user
 
+- name: Configure nagios main configuration
+  copy: src=nagios.cfg dest=/etc/nagios/nagios.cfg
+
+- name: Generate the nagios user CGI template
+  template: src=cgi.cfg.j2
+            dest=/etc/nagios/cgi.cfg
+  with_items:
+    - cgi.cfg
+
+#- name: Setup nagios SSL HTTPD vhost
+#  copy: src=nagios.conf dest=/etc/httpd/conf.d/
+
 - name: Create generic nagios services config
-  copy: src=service.cfg dest=/etc/nagios/
+  copy: src=templates/service.cfg.j2 dest=/etc/nagios/
 
 - name: Configure nagios localhost monitoring
-  copy: src=localhost.cfg dest=/etc/nagios/objects/localhost.cfg
+  copy: src=templates/localhost.cfg.j2 dest=/etc/nagios/objects/localhost.cfg
 
-- name: Create generic nagios services config
-  copy: src=client-service.cfg dest=/usr/local/nagios/etc/
-
-- name: Configure nagios client monitoring
-  copy: src=client.cfg dest=/usr/local/nagios/etc/client.cfg
+#- name: Create generic nagios services config
+#  copy: src=client-service.cfg dest=/usr/local/nagios/etc/
+#
+#- name: Configure nagios client monitoring
+#  copy: src=client.cfg dest=/usr/local/nagios/etc/client.cfg
 
 - name: Set HTTP Listen Port
   lineinfile: dest=/etc/httpd/conf/httpd.conf \
           regexp="^Listen" \
-          line="Listen {{nagios_http_port}}"
+          line="Listen {{ nagios_http_port }}"
 
-- name: Firewall Configuration
+- name: HTTP Firewall
   firewalld:
-    port: "{{ item.port }}"
-    permanent: "{{ item.permanent }}"
-    state: enabled
-  with_items:
-    - { port: '{{ nagios_http_port }}', permanent: true }
-    - { port: '{{ nagios_https_port }}', permanent: true }
+    port: 80/tcp
+    permanent: true
+    state: disabled
+  when: ansible_virtualization_type != "docker"
+
+- name: HTTPS Firewall
+  firewalld:
+    port: 443/tcp
+    permanent: true
+    state: disabled
+  when: ansible_virtualization_type != "docker"
 
 - name: Start nagios service
-  command: systemctl restart nagios.service
-
-- name: Set nagios to start on boot
-  command: systemctl enable nagios.service
+  systemd:
+    name: nagios
+    state: started
+    enabled: true
+  when: ansible_virtualization_type != "docker"
 
 - name: Setup HTTPD service
-  command: systemctl enable httpd.service
-
-- name: Restart HTTPD service
-  command: systemctl restart httpd.service
-
-- name: Restart Firewalled service
-  command: systemctl restart firewalled.service
+  systemd:
+    name: httpd
+    state: restarted
+    enabled: true
+  when: ansible_virtualization_type != "docker"
 
 - name: Display nagios information
   debug:
-    msg="You can access nagios at https://{{ansible_fqdn}}/nagios using {{nagios_admin_username}}"
+    msg="You can access nagios at https://{{ ansible_fqdn }}/nagios using {{ nagios_admin_username }}"
 
 - name: Display nagios guest information
   debug:
-    msg="Guest read only users at https://{{ansible_fqdn}}/nagios using {{nagios_guest_username}}"
+    msg="Guest read only users at https://{{ ansible_fqdn }}/nagios using {{ nagios_guest_username }}"

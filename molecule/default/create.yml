@@ -44,5 +44,7 @@
         privileged: true #"{{ item.privileged | default(omit) }}"
         volumes: #"{{ item.volumes | default(omit) }}"
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
+          - /etc/pki/consumer:/etc/pki/consumer:ro
+          - /etc/pki/entitlement:/etc/pki/entitlement:ro
         capabilities: "{{ item.capabilities | default(omit) }}"
       with_items: "{{ molecule_yml.platforms }}"

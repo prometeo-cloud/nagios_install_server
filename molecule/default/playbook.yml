@@ -1,38 +1,11 @@
 ---
-- name: Create
-  hosts: localhost
-  connection: local
-  gather_facts: false
-  tasks:
-    - name: Building the base Docker image for test containers
-      docker_image:
-        name: "gatblau.org/centos"
-        tag:  "7ds"
-        path: "centos7ds"
-
-    - name: Delete existing Docker containers
-      become: yes
-      docker_container:
-        name:  nagios-install-server
-        image: "gatblau.org/centos:7ds"
-        state: absent
-        force_kill: true
-
-    - name: Start up container
-      docker_container:
-        name: "nagios-install-server"
-        image: "gatblau.org/centos:7ds"
-        hostname: "nagios-install-server"
-        detach: yes
-        tty: yes
-        exposed_ports: "[ 80, 443, 5666 ]"
-        command: "/usr/sbin/init"
-        state: started
-        privileged: yes
-        volumes:
-          - /sys/fs/cgroup:/sys/fs/cgroup:ro
-
 - name: Converge
   hosts: all
+#  pre_tasks:
+#    - name: Include vars of extras.yml
+#      include_vars:
+#        file: molecule/default/extra_vars.yml
+#        name: extra_vars
+
   roles:
     - role: nagios_install_server

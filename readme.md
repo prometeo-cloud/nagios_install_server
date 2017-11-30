@@ -29,7 +29,7 @@ Needs to be provided to the role before execution.
 |---|---|---|
 | **nagios_admin_username** | The admin username. | nagiosadmin |
 | **nagios_admin_password** | The admin password. | abc123ABC |
-| **nagios_admin_email** | The edmin password. | |
+| **nagios_admin_email** | The admin password. | |
 | **nagios_guest_username** | The Nagios guest user. | guest |
 | **nagios_guest_password** | The Nagios guest password. |guest |
 
@@ -37,8 +37,6 @@ Needs to be provided to the role before execution.
 |---|---|---|
 | **nagios_plugin_path** | The Default Plugin Path | /usr/lib64/nagios/plugins |
 | **nagios_create_guest_user** | The creation of Nagios guest user| guest |
-| **nagios_http_port** | The Nagios HTTP Port | 80 |
-| **nagios_https_port** | The Nagios HTTPS Port |443 |
 | **admin_name** | The Nagios Admin Name | Nagios Admin |
 | **nrpe_tcp_port** | The nrpe port | 5666 |
 | **nagios_server_hostname** | The Nagios Server Hostname | |
@@ -51,7 +49,7 @@ How to invoke the role from a playbook:
 ```yaml
 - name: Creates Nagios Server               
   include_role:
-    name: nagios_install_server
+    name: nagios-install-server
   vars:
     nagios_admin_username: '?'
     nagios_admin_password: '?'

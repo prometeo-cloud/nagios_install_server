@@ -7,7 +7,10 @@ lint:
   name: yamllint
 platforms:
   - name: nagios-install-server
-    image: centos:7
+    image: registry.access.redhat.com/rhel7:latest
+    volumes:
+     - /etc/pki/consumer:/etc/pki/consumer:ro
+     - /etc/pki/entitlement:/etc/pki/entitlement:ro
 provisioner:
   name: ansible
   lint:
@@ -15,14 +18,15 @@ provisioner:
 scenario:
   name: default
   test_sequence:
-    #  - destroy
-    #  - create
+      - destroy
+      - create
       - converge
     # - idempotence
-    #  - lint
-    #  - verify
-    #  - destroy
+      - lint
+      - verify
+      - destroy
 verifier:
   name: testinfra
   lint:
     name: flake8
+...
