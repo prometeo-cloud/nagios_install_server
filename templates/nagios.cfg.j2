@@ -1,9 +1,5 @@
-##############################################################################
-#
-# NAGIOS.CFG - Sample Main Config File for Nagios 3.4.4
-#
-##############################################################################
 
+# NAGIOS.CFG - Sample Main Config File for Nagios 3.4.4
 
 # LOG FILE
 # This is the main log file where service and host events are logged
@@ -23,13 +19,10 @@ log_file=/var/log/nagios/nagios.log
 # You can specify individual object config files as shown below:
 cfg_file=/etc/nagios/objects/commands.cfg
 cfg_file=/etc/nagios/objects/contacts.cfg
-#cfg_file=/etc/nagios/objects/timeperiods.cfg
-#cfg_file=/etc/nagios/objects/templates.cfg
+
 
 # Definitions for monitoring the local (Linux) host
 cfg_file=/etc/nagios/objects/localhost.cfg
-cfg_file=/etc/nagios/objects/client.cfg
-
 cfg_file=/etc/nagios/services.cfg
 
 # Definitions for monitoring things in /etc/nagios/conf.d/*.cfg
@@ -60,21 +53,6 @@ object_cache_file=/var/log/nagios/objects.cache
 # about how this feature works.
 
 precached_object_file=/var/log/nagios/objects.precache
-
-
-
-# RESOURCE FILE
-# This is an optional resource file that contains $USERx$ macro
-# definitions. Multiple resource files can be specified by using
-# multiple resource_file definitions.  The CGIs will not attempt to
-# read the contents of resource files, so information that is
-# considered to be sensitive (usernames, passwords, etc) can be
-# defined as macros in this file and restrictive permissions (600)
-# can be placed on this file.
-
-#resource_file=/etc/nagios/private/resource.cfg
-
-
 
 # STATUS FILE
 # This is where the current status of all monitored services and
@@ -136,7 +114,6 @@ check_external_commands=1
 # NOTE: Setting this value to -1 causes Nagios to check the external
 # command file as often as possible.
 
-#command_check_interval=15s
 command_check_interval=-1
 
 
@@ -149,25 +126,7 @@ command_check_interval=-1
 # directory level instead of on the file, as the file is deleted every
 # time its contents are processed.
 
-#command_file=/var/spool/nagios/cmd/nagios.cmd
-
-
-
-# EXTERNAL COMMAND BUFFER SLOTS
-# This settings is used to tweak the number of items or "slots" that
-# the Nagios daemon should allocate to the buffer that holds incoming
-# external commands before they are processed.  As external commands
-# are processed by the daemon, they are removed from the buffer.
-
-#external_command_buffer_slots=4096
-
-
-
-# LOCK FILE
-# This is the lockfile that Nagios will use to store its PID number
-# in when it is running in daemon mode.
-
-#lock_file=/var/run/nagios/nagios.pid
+command_file=/var/spool/nagios/cmd/nagios.cmd
 
 
 
@@ -197,35 +156,6 @@ temp_path=/tmp
 
 event_broker_options=-1
 
-
-
-# EVENT BROKER MODULE(S)
-# This directive is used to specify an event broker module that should
-# by loaded by Nagios at startup.  Use multiple directives if you want
-# to load more than one module.  Arguments that should be passed to
-# the module at startup are seperated from the module path by a space.
-#
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#
-# Do NOT overwrite modules while they are being used by Nagios or Nagios
-# will crash in a fiery display of SEGFAULT glory.  This is a bug/limitation
-# either in dlopen(), the kernel, and/or the filesystem.  And maybe Nagios...
-#
-# The correct/safe way of updating a module is by using one of these methods:
-#    1. Shutdown Nagios, replace the module file, restart Nagios
-#    2. Delete the original module file, move the new module file into place, restart Nagios
-#
-# Example:
-#
-#   broker_module=<modulepath> [moduleargs]
-
-#broker_module=/somewhere/module1.o
-#broker_module=/somewhere/module2.o arg1 arg2=3 debug=0
-
-
-
 # LOG ROTATION METHOD
 # This is the log rotation method that Nagios should use to rotate
 # the main log file. Values are as follows..
@@ -244,8 +174,6 @@ log_rotation_method=d
 # placed (assuming you've chosen to do log rotation).
 
 log_archive_path=/var/log/nagios/archives
-
-
 
 # LOGGING OPTIONS
 # If you want messages logged to the syslog facility, as well as the
@@ -317,21 +245,6 @@ log_external_commands=1
 # this value to 1.
 
 log_passive_checks=1
-
-
-
-# GLOBAL HOST AND SERVICE EVENT HANDLERS
-# These options allow you to specify a host and service event handler
-# command that is to be run for every host or service state change.
-# The global event handler is executed immediately prior to the event
-# handler that you have optionally specified in each host or
-# service definition. The command argument is the short name of a
-# command definition that you define in your host configuration file.
-# Read the HTML docs for more information.
-
-#global_host_event_handler=somecommand
-#global_service_event_handler=somecommand
-
 
 
 # SERVICE INTER-CHECK DELAY METHOD
@@ -431,9 +344,6 @@ check_result_reaper_frequency=10
 
 max_check_result_reaper_time=30
 
-
-
-
 # CHECK RESULT PATH
 # This is directory where Nagios stores the results of host and
 # service checks that have not yet been processed.
@@ -441,10 +351,7 @@ max_check_result_reaper_time=30
 # Note: Make sure that only one instance of Nagios has access
 # to this directory!
 
-check_result_path=/var/log/nagios/spool/checkresults
-
-
-
+check_result_path=/var/log/nagios/
 
 # MAX CHECK RESULT FILE AGE
 # This option determines the maximum age (in seconds) which check
@@ -520,16 +427,6 @@ enable_predictive_service_dependency_checks=1
 #  1 = Use soft state dependencies
 
 soft_state_dependencies=0
-
-
-
-# TIME CHANGE ADJUSTMENT THRESHOLDS
-# These options determine when Nagios will react to detected changes
-# in system time (either forward or backwards).
-
-#time_change_threshold=900
-
-
 
 # AUTO-RESCHEDULING OPTION
 # This option determines whether or not Nagios will attempt to
@@ -781,8 +678,6 @@ execute_host_checks=1
 
 accept_passive_host_checks=1
 
-
-
 # NOTIFICATIONS OPTION
 # This determines whether or not Nagios will sent out any host or
 # service notifications when it is initially (re)started.
@@ -815,88 +710,6 @@ enable_event_handlers=1
 process_performance_data=0
 
 
-
-# HOST AND SERVICE PERFORMANCE DATA PROCESSING COMMANDS
-# These commands are run after every host and service check is
-# performed.  These commands are executed only if the
-# enable_performance_data option (above) is set to 1.  The command
-# argument is the short name of a command definition that you
-# define in your host configuration file.  Read the HTML docs for
-# more information on performance data.
-
-#host_perfdata_command=process-host-perfdata
-#service_perfdata_command=process-service-perfdata
-
-
-
-# HOST AND SERVICE PERFORMANCE DATA FILES
-# These files are used to store host and service performance data.
-# Performance data is only written to these files if the
-# enable_performance_data option (above) is set to 1.
-
-#host_perfdata_file=/tmp/host-perfdata
-#service_perfdata_file=/tmp/service-perfdata
-
-
-
-# HOST AND SERVICE PERFORMANCE DATA FILE TEMPLATES
-# These options determine what data is written (and how) to the
-# performance data files.  The templates may contain macros, special
-# characters (\t for tab, \r for carriage return, \n for newline)
-# and plain text.  A newline is automatically added after each write
-# to the performance data file.  Some examples of what you can do are
-# shown below.
-
-#host_perfdata_file_template=[HOSTPERFDATA]\t$TIMET$\t$HOSTNAME$\t$HOSTEXECUTIONTIME$\t$HOSTOUTPUT$\t$HOSTPERFDATA$
-#service_perfdata_file_template=[SERVICEPERFDATA]\t$TIMET$\t$HOSTNAME$\t$SERVICEDESC$\t$SERVICEEXECUTIONTIME$\t$SERVICELATENCY$\t$SERVICEOUTPUT$\t$SERVICEPERFDATA$
-
-
-
-# HOST AND SERVICE PERFORMANCE DATA FILE MODES
-# This option determines whether or not the host and service
-# performance data files are opened in write ("w") or append ("a")
-# mode. If you want to use named pipes, you should use the special
-# pipe ("p") mode which avoid blocking at startup, otherwise you will
-# likely want the defult append ("a") mode.
-
-#host_perfdata_file_mode=a
-#service_perfdata_file_mode=a
-
-
-
-# HOST AND SERVICE PERFORMANCE DATA FILE PROCESSING INTERVAL
-# These options determine how often (in seconds) the host and service
-# performance data files are processed using the commands defined
-# below.  A value of 0 indicates the files should not be periodically
-# processed.
-
-#host_perfdata_file_processing_interval=0
-#service_perfdata_file_processing_interval=0
-
-
-
-# HOST AND SERVICE PERFORMANCE DATA FILE PROCESSING COMMANDS
-# These commands are used to periodically process the host and
-# service performance data files.  The interval at which the
-# processing occurs is determined by the options above.
-
-#host_perfdata_file_processing_command=process-host-perfdata-file
-#service_perfdata_file_processing_command=process-service-perfdata-file
-
-
-
-# HOST AND SERVICE PERFORMANCE DATA PROCESS EMPTY RESULTS
-# THese options determine wether the core will process empty perfdata
-# results or not. This is needed for distributed monitoring, and intentionally
-# turned on by default.
-# If you don't require empty perfdata - saving some cpu cycles
-# on unwanted macro calculation - you can turn that off. Be careful!
-# Values: 1 = enable, 0 = disable
-
-#host_perfdata_process_empty_results=1
-#service_perfdata_process_empty_results=1
-
-
 # OBSESS OVER SERVICE CHECKS OPTION
 # This determines whether or not Nagios will obsess over service
 # checks and run the ocsp_command defined below.  Unless you're
@@ -906,20 +719,6 @@ process_performance_data=0
 # Values: 1 = obsess over services, 0 = do not obsess (default)
 
 obsess_over_services=0
-
-
-
-# OBSESSIVE COMPULSIVE SERVICE PROCESSOR COMMAND
-# This is the command that is run for every service check that is
-# processed by Nagios.  This command is executed only if the
-# obsess_over_services option (above) is set to 1.  The command
-# argument is the short name of a command definition that you
-# define in your host configuration file. Read the HTML docs for
-# more information on implementing distributed monitoring.
-
-#ocsp_command=somecommand
-
-
 
 # OBSESS OVER HOST CHECKS OPTION
 # This determines whether or not Nagios will obsess over host
@@ -931,17 +730,6 @@ obsess_over_services=0
 
 obsess_over_hosts=0
 
-
-
-# OBSESSIVE COMPULSIVE HOST PROCESSOR COMMAND
-# This is the command that is run for every host check that is
-# processed by Nagios.  This command is executed only if the
-# obsess_over_hosts option (above) is set to 1.  The command
-# argument is the short name of a command definition that you
-# define in your host configuration file. Read the HTML docs for
-# more information on implementing distributed monitoring.
-
-#ochp_command=somecommand
 
 
 
@@ -1056,9 +844,6 @@ host_freshness_check_interval=60
 
 additional_freshness_latency=15
 
-
-
-
 # FLAP DETECTION OPTION
 # This option determines whether or not Nagios will try
 # and detect hosts and services that are "flapping".
@@ -1099,24 +884,6 @@ high_host_flap_threshold=20.0
 date_format=us
 
 
-
-
-# TIMEZONE OFFSET
-# This option is used to override the default timezone that this
-# instance of Nagios runs in.  If not specified, Nagios will use
-# the system configured timezone.
-#
-# NOTE: In order to display the correct timezone in the CGIs, you
-# will also need to alter the Apache directives for the CGI path
-# to include your timezone.  Example:
-#
-#   <Directory "/usr/local/nagios/sbin/">
-#      SetEnv TZ "Australia/Brisbane"
-#      ...
-#   </Directory>
-
-#use_timezone=US/Mountain
-#use_timezone=Australia/Brisbane
 
 
 
@@ -1202,19 +969,6 @@ use_regexp_matching=0
 
 use_true_regexp_matching=0
 
-
-
-# ADMINISTRATOR EMAIL/PAGER ADDRESSES
-# The email and pager address of a global administrator (likely you).
-# Nagios never uses these values itself, but you can access them by
-# using the $ADMINEMAIL$ and $ADMINPAGER$ macros in your notification
-# commands.
-
-admin_email=nagios@localhost
-admin_pager=pagenagios@localhost
-
-
-
 # DAEMON CORE DUMP OPTION
 # This option determines whether or not Nagios is allowed to create
 # a core dump when it runs as a daemon.  Note that it is generally
@@ -1252,32 +1006,6 @@ use_large_installation_tweaks=0
 
 enable_environment_macros=1
 
-
-
-# CHILD PROCESS MEMORY OPTION
-# This option determines whether or not Nagios will free memory in
-# child processes (processed used to execute system commands and host/
-# service checks).  If you specify a value here, it will override
-# program defaults.
-# Value: 1 - Free memory in child processes
-#        0 - Do not free memory in child processes
-
-#free_child_process_memory=1
-
-
-
-# CHILD PROCESS FORKING BEHAVIOR
-# This option determines how Nagios will fork child processes
-# (used to execute system commands and host/service checks).  Normally
-# child processes are fork()ed twice, which provides a very high level
-# of isolation from problems.  Fork()ing once is probably enough and will
-# save a great deal on CPU usage (in large installs), so you might
-# want to consider using this.  If you specify a value here, it will
-# program defaults.
-# Value: 1 - Child processes fork() twice
-#        0 - Child processes fork() just once
-
-#child_processes_fork_twice=1
 
 
 
@@ -1330,3 +1058,11 @@ debug_file=/var/log/nagios/nagios.debug
 # get out of control when debugging Nagios.
 
 max_debug_file_size=1000000
+
+# ADMINISTRATOR EMAIL/PAGER ADDRESSES
+# The email and pager address of a global administrator (likely you).
+# Nagios never uses these values itself, but you can access them by
+# using the $ADMINEMAIL$ and $ADMINPAGER$ macros in your notification
+# commands.
+
+admin_email= {{ nagios_admin_email }}

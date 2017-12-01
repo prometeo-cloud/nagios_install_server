@@ -1,11 +1,6 @@
 ---
 - name: Converge
   hosts: all
-#  pre_tasks:
-#    - name: Include vars of extras.yml
-#      include_vars:
-#        file: molecule/default/extra_vars.yml
-#        name: extra_vars
-
   roles:
     - role: nagios_install_server
+...

@@ -28,10 +28,6 @@
     state: latest
   with_items: "{{ packages_to_install }}"
 
-#- name: Check password file exists
-#  stat: path= /etc/nagios/passwd
-#  register: nagios_user_pwfile_exists
-
 - name: Check nagios Users
   stat: path=/etc/nagios/passwd
   ignore_errors: true
@@ -52,28 +48,21 @@
   when: nagios_create_guest_user
 
 - name: Configure nagios main configuration
-  copy: src=nagios.cfg dest=/etc/nagios/nagios.cfg
+  copy: src=templates/nagios.cfg.j2 dest=/etc/nagios/nagios.cfg
 
-- name: Generate the nagios user CGI template
-  template: src=cgi.cfg.j2
-            dest=/etc/nagios/cgi.cfg
-  with_items:
-    - cgi.cfg
+- name: Generate Nagios Admins contact details file
+  template: src=templates/contacts.cfg.j2
+            dest=/etc/nagios/objects/contacts.cfg
 
-#- name: Setup nagios SSL HTTPD vhost
-#  copy: src=nagios.conf dest=/etc/httpd/conf.d/
+- name: Generate commands configuration file
+  template: src=templates/commands.cfg.j2
+            dest=/etc/nagios/objects/commands.cfg
 
 - name: Create generic nagios services config
   copy: src=templates/service.cfg.j2 dest=/etc/nagios/
 
 - name: Configure nagios localhost monitoring
   copy: src=templates/localhost.cfg.j2 dest=/etc/nagios/objects/localhost.cfg
-
-#- name: Create generic nagios services config
-#  copy: src=client-service.cfg dest=/usr/local/nagios/etc/
-#
-#- name: Configure nagios client monitoring
-#  copy: src=client.cfg dest=/usr/local/nagios/etc/client.cfg
 
 - name: Set HTTP Listen Port
   lineinfile: dest=/etc/httpd/conf/httpd.conf \
