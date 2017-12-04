@@ -73,14 +73,14 @@
   firewalld:
     port: 80/tcp
     permanent: true
-    state: disabled
+    state: enabled
   when: ansible_virtualization_type != "docker"
 
 - name: HTTPS Firewall
   firewalld:
     port: 443/tcp
     permanent: true
-    state: disabled
+    state: enabled
   when: ansible_virtualization_type != "docker"
 
 - name: Start nagios service
