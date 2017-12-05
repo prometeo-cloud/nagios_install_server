@@ -48,21 +48,21 @@
   when: nagios_create_guest_user
 
 - name: Configure nagios main configuration
-  copy: src=templates/nagios.cfg.j2 dest=/etc/nagios/nagios.cfg
+  template: src=nagios.cfg.j2 dest=/etc/nagios/nagios.cfg
 
 - name: Generate Nagios Admins contact details file
-  template: src=templates/contacts.cfg.j2
-            dest=/etc/nagios/objects/contacts.cfg
+  template: src=contacts.cfg.j2 dest=/etc/nagios/objects/contacts.cfg
 
-- name: Generate commands configuration file
-  template: src=templates/commands.cfg.j2
-            dest=/etc/nagios/objects/commands.cfg
+#- name: Generate commands configuration file
+#  template: src=commands.cfg.j2 dest=/etc/nagios/objects/commands.cfg
 
-- name: Create generic nagios services config
-  copy: src=templates/service.cfg.j2 dest=/etc/nagios/
+#- name: Create generic nagios services config
+ # template: src=services.cfg.j2 dest=/etc/nagios/services.cfg
+- name: Generate the nagios user CGI template
+  template: src=cgi.cfg.j2 dest=/etc/nagios/cgi.cfg
 
 - name: Configure nagios localhost monitoring
-  copy: src=templates/localhost.cfg.j2 dest=/etc/nagios/objects/localhost.cfg
+  template: src=localhost.cfg.j2 dest=/etc/nagios/objects/localhost.cfg
 
 - name: Set HTTP Listen Port
   lineinfile: dest=/etc/httpd/conf/httpd.conf \
@@ -83,15 +83,18 @@
     state: enabled
   when: ansible_virtualization_type != "docker"
 
+- name: Verify Nagios Configurations
+  command: /usr/sbin/nagios3 -v /etc/nagios3/nagios.cfg
+
 - name: Start nagios service
-  systemd:
+  service:
     name: nagios
     state: started
     enabled: true
   when: ansible_virtualization_type != "docker"
 
 - name: Setup HTTPD service
-  systemd:
+  service:
     name: httpd
     state: restarted
     enabled: true

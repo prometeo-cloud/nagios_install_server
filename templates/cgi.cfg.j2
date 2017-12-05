@@ -1,6 +1,6 @@
 #################################################################
 #
-# CGI.CFG - Sample CGI Configuration File for Nagios
+# CGI.CFG - Sample CGI Configuration File for Nagios 4.0.8
 #
 #
 #################################################################
@@ -12,7 +12,6 @@
 # data they might need.
 
 main_config_file=/etc/nagios/nagios.cfg
-
 
 
 # PHYSICAL HTML PATH
@@ -175,6 +174,8 @@ authorized_for_all_hosts={{ nagios_admin_username }}
 authorized_for_all_service_commands={{ nagios_admin_username }}
 authorized_for_all_host_commands={{ nagios_admin_username }}
 
+
+
 # READ-ONLY USERS
 # A comma-delimited list of usernames that have read-only rights in
 # the CGIs.  This will block any service or host commands normally shown
@@ -211,6 +212,9 @@ authorized_for_all_host_commands={{ nagios_admin_username }}
 #color_transparency_index_r=255
 #color_transparency_index_g=255
 #color_transparency_index_b=255
+
+
+
 
 # DEFAULT STATUSMAP LAYOUT METHOD
 # This option allows you to specify the default layout method
@@ -263,7 +267,7 @@ default_statuswrl_layout=4
 # OS and distribution, so you may have to tweak this to
 # work on your system.
 
-ping_syntax=/bin/ping -n -U -c 5 $HOSTADDRESS$
+#ping_syntax=/bin/ping -n -U -c 5 $HOSTADDRESS$
 
 
 
