@@ -108,7 +108,7 @@ define service{
 
 define service{
         use                             local-service         ; Name of service template to use
-        host_name                       localhost
+        host_name                       {{ nagios_server_hostname }}
         service_description             SSH
 	check_command			check_ssh
 	notifications_enabled		1

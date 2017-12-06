@@ -53,11 +53,6 @@
 - name: Generate Nagios Admins contact details file
   template: src=contacts.cfg.j2 dest=/etc/nagios/objects/contacts.cfg
 
-#- name: Generate commands configuration file
-#  template: src=commands.cfg.j2 dest=/etc/nagios/objects/commands.cfg
-
-#- name: Create generic nagios services config
- # template: src=services.cfg.j2 dest=/etc/nagios/services.cfg
 - name: Generate the nagios user CGI template
   template: src=cgi.cfg.j2 dest=/etc/nagios/cgi.cfg
 
@@ -82,9 +77,6 @@
     permanent: true
     state: enabled
   when: ansible_virtualization_type != "docker"
-
-- name: Verify Nagios Configurations
-  command: /usr/sbin/nagios3 -v /etc/nagios3/nagios.cfg
 
 - name: Start nagios service
   service:
