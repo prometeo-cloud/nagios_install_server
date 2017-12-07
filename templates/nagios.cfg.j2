@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# NAGIOS.CFG - Sample Main Config File for Nagios 3.4.4
+# NAGIOS.CFG - Sample Main Config File for Nagios 4.3.4
 #
 ##############################################################################
 
@@ -1207,8 +1207,8 @@ use_true_regexp_matching=0
 # using the $ADMINEMAIL$ and $ADMINPAGER$ macros in your notification
 # commands.
 
-admin_email=nagios@localhost
-admin_pager=pagenagios@localhost
+admin_email= {{ nagios_admin_email }}
+#admin_pager=pagenagios@localhost
 
 
 
