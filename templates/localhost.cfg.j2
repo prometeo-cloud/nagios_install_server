@@ -14,7 +14,17 @@ define host{
 							; in (or inherited by) the linux-server host template definition.
         host_name               {{ nagios_server_hostname }}
         alias                   nagios-install-server
-        address                 {{ nagios_server_ip }}
+	    address                 {{ nagios_server_ip }}
+        max_check_attempts      2                       ;Check each server 2 times (max)
+        active_checks_enabled   1
+        passive_checks_enabled  1
+        event_handler_enabled   1
+        notifications_enabled   1
+        contacts                Nagios Admin
+        notification_period     24x7                    ; Send notification out at any time - day or night
+        notification_interval   30                      ; Resend notifications every 30 minutes
+        notification_options    d,u,r
+        check_command           check-host-alive
         }
 
 ###############################################################################
@@ -38,7 +48,17 @@ define service{
         use                             local-service         ; Name of service template to use
         host_name                       {{ nagios_server_hostname }}
         service_description             PING
-	check_command			check_ping!100.0,20%!500.0,60%
+        max_check_attempts      5
+        active_checks_enabled   1
+        check_interval  5
+        retry_interval  3
+        check_period            24x7
+        notification_interval   30
+        notification_period     24x7
+        notification_options    w,c,r
+        #contact_groups          Nagios Admin
+
+        check_command                   check_ping!100.0,20%!500.0,60%
         }
 
 
@@ -50,7 +70,16 @@ define service{
         use                             local-service         ; Name of service template to use
         host_name                       {{ nagios_server_hostname }}
         service_description             Root Partition
-	check_command			check_local_disk!20%!10%!/
+        max_check_attempts      5
+        active_checks_enabled   1
+        check_interval  5
+        retry_interval  3
+        check_period            24x7
+        notification_interval   30
+        notification_period     24x7
+        notification_options    w,c,r
+        #contact_groups          Nagios Admin
+        check_command                   check_local_disk!20%!10%!/
         }
 
 
@@ -63,7 +92,16 @@ define service{
         use                             local-service         ; Name of service template to use
         host_name                       {{ nagios_server_hostname }}
         service_description             Current Users
-	check_command			check_local_users!20!50
+        max_check_attempts      5
+        active_checks_enabled   1
+        check_interval  5
+        retry_interval  3
+        check_period            24x7
+        notification_interval   30
+        notification_period     24x7
+        notification_options    w,c,r
+        #contact_groups          Nagios Admin
+        check_command                   check_local_users!20!50
         }
 
 
@@ -75,7 +113,16 @@ define service{
         use                             local-service         ; Name of service template to use
         host_name                      {{ nagios_server_hostname }}
         service_description             Total Processes
-	check_command			check_local_procs!250!400!RSZDT
+        max_check_attempts      5
+        active_checks_enabled   1
+        check_interval  5
+        retry_interval  3
+        check_period            24x7
+        notification_interval   30
+        notification_period     24x7
+        notification_options    w,c,r
+        #contact_groups          Nagios Admin
+        check_command                   check_local_procs!250!400!RSZDT
         }
 
 
@@ -86,7 +133,16 @@ define service{
         use                             local-service         ; Name of service template to use
         host_name                       {{ nagios_server_hostname }}
         service_description             Current Load
-	check_command			check_local_load!5.0,4.0,3.0!10.0,6.0,4.0
+        max_check_attempts      5
+        active_checks_enabled   1
+        check_interval  5
+        retry_interval  3
+        check_period            24x7
+        notification_interval   30
+        notification_period     24x7
+        notification_options    w,c,r
+        #contact_groups          Nagios Admin
+        check_command                   check_local_load!5.0,4.0,3.0!10.0,6.0,4.0
         }
 
 
@@ -98,7 +154,16 @@ define service{
         use                             local-service         ; Name of service template to use
         host_name                       {{ nagios_server_hostname }}
         service_description             Swap Usage
-	check_command			check_local_swap!20!10
+        max_check_attempts      5
+        active_checks_enabled   1
+        check_interval  5
+        retry_interval  3
+        check_period            24x7
+        notification_interval   30
+        notification_period     24x7
+        notification_options    w,c,r
+        #contact_groups          Nagios Admin
+        check_command                   check_local_swap!20!10
         }
 
 
@@ -110,7 +175,16 @@ define service{
         use                             local-service         ; Name of service template to use
         host_name                       {{ nagios_server_hostname }}
         service_description             SSH
-	check_command			check_ssh
-	notifications_enabled		1
+        max_check_attempts      5
+        active_checks_enabled   1
+        check_interval  5
+        retry_interval  3
+        check_period            24x7
+        notification_interval   30
+        notification_period     24x7
+        notification_options    w,c,r
+        #contact_groups          Nagios Admin
+        check_command                   check_ssh
+        notifications_enabled           1
         }
 

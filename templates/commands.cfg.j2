@@ -227,3 +227,13 @@ define command{
         command_name    process-service-perfdata
         command_line    /usr/bin/printf "%b" "$LASTSERVICECHECK$\t$HOSTNAME$\t$SERVICEDESC$\t$SERVICESTATE$\t$SERVICEATTEMPT$\t$SERVICESTATETYPE$\t$SERVICEEXECUTIONTIME$\t$SERVICELATENCY$\t$SERVICEOUTPUT$\t$SERVICEPERFDATA$\n" >> /var/log/nagios/service-perfdata.out
         }
+
+###############################################################################
+# NRPE CHECK COMMAND
+#
+# Command to use NRPE to check remote host systems
+###############################################################################
+define command{
+        command_name check_nrpe
+        command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
+        }
