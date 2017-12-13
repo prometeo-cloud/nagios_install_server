@@ -9,13 +9,13 @@ This role install Nagios Server and generate hosts/checks.
 Deploying the Nagios Server.
 
 **Feature:** Creates/Installs/Configures a Nagios Server  
-- **Given**a Host for Server
-- **Given**a repository link for additional packages
+- **Given** a Host for Server
+- **Given** a repository link for additional packages
 - **When** deployment is executed
 - **Then** Nagios packages and common plugins are installed  
 - **Then** nagios admin and guest user are created
-- **Then** Generate and configure the config file 
-- **Then** Generate the nagios contact template 
+- **Then** generate and configure the config file 
+- **Then** generate the nagios contact template 
 - **Then** Firewall rules are added
 - **Then** Nagios and HTTPD Services are restarted
 
@@ -32,6 +32,8 @@ Needs to be provided to the role before execution.
 | **nagios_admin_email** | The admin password. | |
 | **nagios_guest_username** | The Nagios guest user. | guest |
 | **nagios_guest_password** | The Nagios guest password. |guest |
+| **nagios_server_hostname** | The Nagios Server Hostname | |
+| **nagios_server_ip** | The Nagios Server IP Address | |
 
 | Variable  | Description  | Example  | 
 |---|---|---|
@@ -39,8 +41,6 @@ Needs to be provided to the role before execution.
 | **nagios_create_guest_user** | The creation of Nagios guest user| guest |
 | **admin_name** | The Nagios Admin Name | Nagios Admin |
 | **nrpe_tcp_port** | The nrpe port | 5666 |
-| **nagios_server_hostname** | The Nagios Server Hostname | |
-| **nagios_server_ip** | The Nagios Server IP Address | |
 
 ## Usage:
 
@@ -49,7 +49,7 @@ How to invoke the role from a playbook:
 ```yaml
 - name: Creates Nagios Server               
   include_role:
-    name: nagios-install-server
+    name: nagios_install_server
   vars:
     nagios_admin_username: '?'
     nagios_admin_password: '?'
